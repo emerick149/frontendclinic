@@ -75,6 +75,7 @@ function App() {
       setSaveMessage('Office saved successfully.');
       setOfficeName('');
       setOfficeNumber('');
+      setSearch('');
       fetchOffices();
     } catch (error) {
       if (error.response) {
