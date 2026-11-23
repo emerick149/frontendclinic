@@ -1,205 +1,281 @@
-
 * {
   box-sizing: border-box;
 }
 
 :root {
-  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  font-family: Arial, "Segoe UI", sans-serif;
+  font-size: 14px;
   color: #1f2937;
-  background: #f1f5f9;
 }
 
 body {
   margin: 0;
-  min-width: 320px;
+  background: #f0f4f8;
   min-height: 100vh;
-  background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.08), transparent 45%),
-    #f1f5f9;
-}
-
-button,
-input {
-  font: inherit;
 }
 
 #root {
   min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
   padding: 32px 16px;
 }
 
-.home,
-.container {
-  width: min(700px, 100%);
-  padding: 32px;
-  border: 1px solid #dbe4ef;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.10);
-}
-
-.home {
-  text-align: center;
-}
-
-h1,
-h2 {
-  color: #0f172a;
-}
-
-h1 {
-  margin: 0 0 8px;
-  color: #1d4ed8;
-}
-
-h2 {
-  margin-top: 0;
-}
-
-.buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 24px;
-}
-
-.section {
+/* ── Page wrapper ── */
+.page {
+  width: min(760px, 100%);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  color: #334155;
+  gap: 24px;
 }
 
-.section label {
+/* ── Card ── */
+.card {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 24px 28px;
+}
+
+/* ── Section heading ── */
+.section-title {
+  text-align: center;
+  margin: 0 0 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* ── Save form rows ── */
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.form-row label {
+  width: 130px;
+  flex-shrink: 0;
+  text-align: right;
   font-weight: 600;
-  color: #334155;
+  color: #374151;
 }
 
-.section input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #bfcee0;
-  border-radius: 8px;
-  background: #f8fafc;
+.form-row input {
+  flex: 1;
+  max-width: 220px;
+  padding: 5px 8px;
+  border: 1px solid #9ca3af;
+  border-radius: 3px;
+  font: inherit;
+  background: #fff;
   outline: none;
 }
 
-.section input:focus {
+.form-row input:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
-.section > button,
-.section .action-button,
-.container > span button,
-.section span button {
-  width: fit-content;
-  margin-top: 8px;
+/* ── Save button row ── */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
 }
 
-.container > span {
-  display: block;
-  margin-top: 20px;
+/* ── Search row ── */
+.search-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 14px;
 }
 
+.search-row input {
+  padding: 5px 8px;
+  border: 1px solid #9ca3af;
+  border-radius: 3px;
+  font: inherit;
+  width: 220px;
+  outline: none;
+}
+
+.search-row input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* ── Buttons ── */
 button {
-  padding: 9px 14px;
-  border: 0;
-  border-radius: 8px;
-  background: #2563eb;
-  color: #ffffff;
+  font: inherit;
   cursor: pointer;
+  border: none;
+  border-radius: 3px;
   font-weight: 600;
-  transition: background 0.15s ease, transform 0.15s ease;
+  transition: background 0.15s;
 }
 
-button:hover:not(:disabled) {
-  background: #1d4ed8;
-  transform: translateY(-1px);
+.btn-primary {
+  background: #3b82f6;
+  color: #fff;
+  padding: 6px 18px;
 }
 
-button:disabled {
-  background: #94a3b8;
-  cursor: not-allowed;
-  opacity: 0.75;
+.btn-primary:hover {
+  background: #2563eb;
 }
 
-.delete-button {
+.btn-secondary {
+  background: #6b7280;
+  color: #fff;
+  padding: 5px 12px;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+}
+
+.btn-edit {
+  background: #3b82f6;
+  color: #fff;
+  padding: 4px 10px;
+  margin-right: 4px;
+}
+
+.btn-edit:hover {
+  background: #2563eb;
+}
+
+.btn-delete {
+  background: #ef4444;
+  color: #fff;
+  padding: 4px 10px;
+}
+
+.btn-delete:hover {
   background: #dc2626;
 }
 
-.delete-button:hover:not(:disabled) {
-  background: #b91c1c;
+.btn-save-inline {
+  background: #22c55e;
+  color: #fff;
+  padding: 4px 10px;
+  margin-right: 4px;
 }
 
-.message {
-  margin: 12px 0 0;
-  padding: 10px 12px;
-  border-left: 4px solid #3b82f6;
-  border-radius: 6px;
-  background: #eff6ff;
-  color: #1e40af;
+.btn-save-inline:hover {
+  background: #16a34a;
 }
 
-/* Office display table */
-.section table {
+.btn-cancel {
+  background: #6b7280;
+  color: #fff;
+  padding: 4px 10px;
+}
+
+.btn-cancel:hover {
+  background: #4b5563;
+}
+
+/* ── Table ── */
+table {
   width: 100%;
-  margin-top: 12px;
   border-collapse: collapse;
-  overflow: hidden;
-  border-radius: 8px;
 }
 
-.section th,
-.section td {
-  border: 1px solid #dbe4ef;
-  padding: 10px;
+thead tr {
+  background: #e5e7eb;
+}
+
+th,
+td {
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
   text-align: center;
 }
 
-.section th {
-  background: #dbeafe;
-  color: #1e3a8a;
+th {
+  font-weight: 700;
+  color: #111827;
 }
 
-.section tbody tr:nth-child(even) {
-  background: #f8fafc;
+tbody tr:nth-child(even) {
+  background: #f9fafb;
 }
 
-.section td button {
-  margin: 3px;
+tbody tr:hover {
+  background: #eff6ff;
 }
 
+.actions-cell {
+  white-space: nowrap;
+}
+
+.empty-row {
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ── Inline edit inputs inside table ── */
+.inline-input {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #9ca3af;
+  border-radius: 3px;
+  font: inherit;
+  outline: none;
+}
+
+.inline-input:focus {
+  border-color: #3b82f6;
+}
+
+.edit-row td {
+  background: #fefce8;
+}
+
+/* ── Feedback message ── */
+.feedback {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border-left: 4px solid #3b82f6;
+  background: #eff6ff;
+  color: #1e40af;
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+/* ── Responsive ── */
 @media (max-width: 600px) {
-  #root {
+  .form-row {
+    flex-direction: column;
     align-items: flex-start;
   }
 
-  .home,
-  .container {
-    padding: 20px;
+  .form-row label {
+    width: auto;
+    text-align: left;
   }
 
-  .buttons {
-    flex-direction: column;
-  }
-
-  .buttons span,
-  .buttons button {
+  .form-row input {
+    max-width: 100%;
     width: 100%;
   }
 
-  .section table {
-    font-size: 14px;
+  .search-row {
+    flex-wrap: wrap;
   }
 
-  .section th,
-  .section td {
-    padding: 8px 4px;
+  .search-row input {
+    width: 100%;
+  }
+
+  th,
+  td {
+    padding: 6px 6px;
+    font-size: 13px;
   }
 }

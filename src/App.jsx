@@ -1,73 +1,251 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './index.css';
 
-import Office from './components/Office';
-import OfficeDisplay from './components/OfficeDisplay';
-import LibraryButton from './components/LibraryButton';
+const BASE_URL = 'http://localhost:8082/api/offices';
 
 function App() {
-  const [page, setPage] = useState('home');
+  const [officeName, setOfficeName] = useState('');
+  const [officeNumber, setOfficeNumber] = useState('');
+  const [saveMessage, setSaveMessage] = useState('');
 
-  if (page === 'save') {
-    return (
-      <div className="container">
-        <Office mode="save" />
+  const [offices, setOffices] = useState([]);
+  const [search, setSearch] = useState('');
+  const [tableMessage, setTableMessage] = useState('');
 
-        <LibraryButton
-          buttonLabel="Back to Home"
-          onClickButton={() => setPage('home')}
-        />
-      </div>
-    );
-  }
+  // Edit state
+  const [editId, setEditId] = useState(null);
+  const [editName, setEditName] = useState('');
+  const [editNumber, setEditNumber] = useState('');
 
-  if (page === 'delete') {
-    return (
-      <div className="container">
-        <Office mode="delete" />
+  const fetchOffices = async () => {
+    try {
+      const res = await axios.get(BASE_URL);
+      setOffices(res.data);
+    } catch {
+      setTableMessage('Unable to load offices. Check the backend.');
+    }
+  };
 
-        <LibraryButton
-          buttonLabel="Back to Home"
-          onClickButton={() => setPage('home')}
-        />
-      </div>
-    );
-  }
+  useEffect(() => {
+    fetchOffices();
+  }, []);
 
-  if (page === 'display') {
-    return (
-      <div className="container">
-        <OfficeDisplay />
+  const handleSave = async () => {
+    if (!officeName.trim() || !officeNumber) {
+      setSaveMessage('Please enter both office name and number.');
+      return;
+    }
 
-        <LibraryButton
-          buttonLabel="Back to Home"
-          onClickButton={() => setPage('home')}
-        />
-      </div>
-    );
-  }
+    try {
+      await axios.post(`${BASE_URL}/save`, {
+        name: officeName.trim(),
+        officeNumber: parseInt(officeNumber, 10),
+      });
+      setSaveMessage('Office saved successfully.');
+      setOfficeName('');
+      setOfficeNumber('');
+      fetchOffices();
+    } catch (error) {
+      if (error.response) {
+        const d = error.response.data;
+        setSaveMessage(typeof d === 'string' ? d : d?.message || 'Save failed.');
+      } else if (error.request) {
+        setSaveMessage('No response from backend. Is Spring Boot running?');
+      } else {
+        setSaveMessage(error.message);
+      }
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this office?')) return;
+    try {
+      await axios.delete(`${BASE_URL}/${id}`);
+      setTableMessage('Office deleted.');
+      fetchOffices();
+    } catch {
+      setTableMessage('Delete failed.');
+    }
+  };
+
+  const startEdit = (office) => {
+    setEditId(office.id);
+    setEditName(office.name);
+    setEditNumber(office.officeNumber);
+    setTableMessage('');
+  };
+
+  const cancelEdit = () => {
+    setEditId(null);
+    setEditName('');
+    setEditNumber('');
+  };
+
+  const handleUpdate = async (id) => {
+    if (!editName.trim() || !editNumber) {
+      setTableMessage('Please fill in both fields to update.');
+      return;
+    }
+    try {
+      await axios.put(`${BASE_URL}/${id}`, {
+        name: editName.trim(),
+        officeNumber: parseInt(editNumber, 10),
+      });
+      setTableMessage('Office updated successfully.');
+      cancelEdit();
+      fetchOffices();
+    } catch (error) {
+      if (error.response) {
+        const d = error.response.data;
+        setTableMessage(typeof d === 'string' ? d : d?.message || 'Update failed.');
+      } else if (error.request) {
+        setTableMessage('No response from backend.');
+      } else {
+        setTableMessage(error.message);
+      }
+    }
+  };
+
+  const filteredOffices = offices.filter(
+    (o) =>
+      o.name.toLowerCase().includes(search.toLowerCase()) ||
+      o.officeNumber.toString().includes(search)
+  );
+
+  const handleClear = () => {
+    setSearch('');
+  };
 
   return (
-    <div className="home">
-      <h1>Clinic Management System</h1>
-      <h2>Home</h2>
+    <div className="page">
+      {/* ── Save Office Form ── */}
+      <section className="card">
+        <h2 className="section-title">Save Office</h2>
 
-      <div className="buttons">
-        <LibraryButton
-          buttonLabel="Save Office"
-          onClickButton={() => setPage('save')}
-        />
+        <div className="form-row">
+          <label>Office Name:</label>
+          <input
+            type="text"
+            value={officeName}
+            onChange={(e) => setOfficeName(e.target.value)}
+          />
+        </div>
 
-        <LibraryButton
-          buttonLabel="Delete Office"
-          onClickButton={() => setPage('delete')}
-        />
+        <div className="form-row">
+          <label>Office Number:</label>
+          <input
+            type="number"
+            value={officeNumber}
+            onChange={(e) => setOfficeNumber(e.target.value)}
+          />
+        </div>
 
-        <LibraryButton
-          buttonLabel="Display Offices"
-          onClickButton={() => setPage('display')}
-        />
-      </div>
+        <div className="form-actions">
+          <button className="btn btn-primary" onClick={handleSave}>
+            SAVE OFFICE
+          </button>
+        </div>
+
+        {saveMessage && <p className="feedback">{saveMessage}</p>}
+      </section>
+
+      {/* ── All Offices Table ── */}
+      <section className="card">
+        <h2 className="section-title">All Offices</h2>
+
+        <div className="search-row">
+          <input
+            type="text"
+            placeholder="Search by name or number"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button className="btn btn-secondary" onClick={fetchOffices}>
+            Search
+          </button>
+          <button className="btn btn-secondary" onClick={handleClear}>
+            Clear
+          </button>
+        </div>
+
+        {tableMessage && <p className="feedback">{tableMessage}</p>}
+
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Office Name</th>
+              <th>Office Number</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredOffices.length > 0 ? (
+              filteredOffices.map((office, index) =>
+                editId === office.id ? (
+                  <tr key={office.id} className="edit-row">
+                    <td>{index + 1}</td>
+                    <td>
+                      <input
+                        className="inline-input"
+                        type="text"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        className="inline-input"
+                        type="number"
+                        value={editNumber}
+                        onChange={(e) => setEditNumber(e.target.value)}
+                      />
+                    </td>
+                    <td className="actions-cell">
+                      <button
+                        className="btn btn-save-inline"
+                        onClick={() => handleUpdate(office.id)}
+                      >
+                        Save
+                      </button>
+                      <button className="btn btn-cancel" onClick={cancelEdit}>
+                        Cancel
+                      </button>
+                    </td>
+                  </tr>
+                ) : (
+                  <tr key={office.id}>
+                    <td>{index + 1}</td>
+                    <td>{office.name}</td>
+                    <td>{office.officeNumber}</td>
+                    <td className="actions-cell">
+                      <button
+                        className="btn btn-edit"
+                        onClick={() => startEdit(office)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-delete"
+                        onClick={() => handleDelete(office.id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                )
+              )
+            ) : (
+              <tr>
+                <td colSpan="4" className="empty-row">
+                  No offices found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </section>
     </div>
   );
 }
