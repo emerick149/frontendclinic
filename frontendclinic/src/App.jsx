@@ -1,8 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import axios from 'axios';
 import './index.css';
 
 const BASE_URL = 'http://localhost:8082/api/offices';
+
+// Prevents the whole page going blank if any render error occurs
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: 32, color: '#b91c1c' }}>
+          <strong>Something went wrong:</strong> {this.state.error?.message}
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 function App() {
   const [officeName, setOfficeName] = useState('');
@@ -20,10 +41,19 @@ function App() {
 
   const fetchOffices = async () => {
     try {
-      const res = await axios.get(BASE_URL);
-      setOffices(res.data);
-    } catch {
-      setTableMessage('Unable to load offices. Check the backend.');
+      const res = await axios.get(`${BASE_URL}/all`);
+      const data = Array.isArray(res.data) ? res.data : [];
+      setOffices(data);
+      setTableMessage('');
+    } catch (error) {
+      console.error('fetchOffices error:', error);
+      if (error.response) {
+        setTableMessage(`Server error ${error.response.status}: could not load offices.`);
+      } else if (error.request) {
+        setTableMessage('Backend is not reachable. Start Spring Boot on port 8082.');
+      } else {
+        setTableMessage(error.message);
+      }
     }
   };
 
@@ -61,7 +91,7 @@ function App() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this office?')) return;
     try {
-      await axios.delete(`${BASE_URL}/${id}`);
+      await axios.delete(`${BASE_URL}/delete/${id}`);
       setTableMessage('Office deleted.');
       fetchOffices();
     } catch {
@@ -88,7 +118,7 @@ function App() {
       return;
     }
     try {
-      await axios.put(`${BASE_URL}/${id}`, {
+      await axios.put(`${BASE_URL}/${id}/updateOffice`, {
         name: editName.trim(),
         officeNumber: parseInt(editNumber, 10),
       });
@@ -118,6 +148,7 @@ function App() {
   };
 
   return (
+    <ErrorBoundary>
     <div className="page">
       {/* ── Save Office Form ── */}
       <section className="card">
@@ -247,6 +278,7 @@ function App() {
         </table>
       </section>
     </div>
+    </ErrorBoundary>
   );
 }
 

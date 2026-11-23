@@ -1,0 +1,252 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+    "name": "Clinic Quiz Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Part A: Derived Queries",
+      "item": [
+        {
+          "name": "A1: Patients by last name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/patients/by-last-name?lastName=uwase",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "patients", "by-last-name"],
+              "query": [{"key": "lastName", "value": "uwase"}]
+            }
+          }
+        },
+        {
+          "name": "A2: Appointments by status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/appointments/by-status?status=SCHEDULED",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "appointments", "by-status"],
+              "query": [{"key": "status", "value": "SCHEDULED"}]
+            }
+          }
+        },
+        {
+          "name": "A3: Appointments between dates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/appointments/between?start=2026-10-01&end=2026-10-31",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "appointments", "between"],
+              "query": [
+                {"key": "start", "value": "2026-10-01"},
+                {"key": "end", "value": "2026-10-31"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "A4: No double booking (Test 409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentDate\": \"2026-10-15\",\n  \"reason\": \"Test double booking\",\n  \"status\": \"SCHEDULED\",\n  \"patient\": { \"id\": \"PASTE-PATIENT-UUID-HERE\" },\n  \"doctor\": { \"id\": \"00da9421-f7c2-419b-917b-e28a1b07e851\" }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8082/api/appointments/save",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "appointments", "save"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Part B: JPQL with Joins",
+      "item": [
+        {
+          "name": "B1: Doctors by specialization",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/doctors/by-specialization?name=cardiology",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "doctors", "by-specialization"],
+              "query": [{"key": "name", "value": "cardiology"}]
+            }
+          }
+        },
+        {
+          "name": "B2: Doctors without office",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/doctors/without-office",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "doctors", "without-office"]
+            }
+          }
+        },
+        {
+          "name": "B3: Unused specializations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/specializations/unused",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "specializations", "unused"]
+            }
+          }
+        },
+        {
+          "name": "B4: Patients of a doctor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/patients/of-doctor/00da9421-f7c2-419b-917b-e28a1b07e851",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "patients", "of-doctor", "00da9421-f7c2-419b-917b-e28a1b07e851"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Part C: Aggregates and Bulk",
+      "item": [
+        {
+          "name": "C1: Appointments per status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/appointments/stats/by-status",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "appointments", "stats", "by-status"]
+            }
+          }
+        },
+        {
+          "name": "C2: Frequent patients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/patients/frequent?min=3",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "patients", "frequent"],
+              "query": [{"key": "min", "value": "3"}]
+            }
+          }
+        },
+        {
+          "name": "C3: Busiest office",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/offices/busiest",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "offices", "busiest"]
+            }
+          }
+        },
+        {
+          "name": "C4: Doctor is absent (Bulk Update)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/appointments/cancel-day?doctorId=00da9421-f7c2-419b-917b-e28a1b07e851&date=2026-10-15",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "appointments", "cancel-day"],
+              "query": [
+                {"key": "doctorId", "value": "00da9421-f7c2-419b-917b-e28a1b07e851"},
+                {"key": "date", "value": "2026-10-15"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bonus",
+      "item": [
+        {
+          "name": "Bonus 1: Pagination",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/appointments/page?page=0&size=5&sort=appointmentDate,desc",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "appointments", "page"],
+              "query": [
+                {"key": "page", "value": "0"},
+                {"key": "size", "value": "5"},
+                {"key": "sort", "value": "appointmentDate,desc"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Bonus 2: Clean old cancellations",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/appointments/cancelled-before?date=2026-10-15",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "appointments", "cancelled-before"],
+              "query": [{"key": "date", "value": "2026-10-15"}]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
